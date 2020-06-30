@@ -2,7 +2,7 @@
 
 Submission to Semeval 2020 task 1: Unsupervised Lexical Semantic Change Detection
 
-The system embeds target words using xlmr.large, clusters the resulting *contextualized* using kmeans++, and uses the resulting cluster assignments as a direct proxy for senses.
+The system embeds target words using xlmr.large, clusters the resulting *contextualized* embeddings using kmeans++, and uses the resulting cluster assignments as a direct proxy for senses.
 
 
 To run: 
