@@ -34,10 +34,16 @@ def get_ctxs(lang, corpus, pad_token):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cuda', action='store_true')
+    parser.add_argument('--batch_size', type=int, default=100)
+
     with torch.no_grad():
         logging.basicConfig(level=logging.DEBUG)
         logging.info('loading XLM-R')
-        xlmr = torch.hub.load('pytorch/fairseq', 'xlmr.large').eval().cuda()
+        xlmr = torch.hub.load('pytorch/fairseq', 'xlmr.large').eval()
+        if args.cuda:
+            xlmr.cuda()
         logging.info('finding contexts')
         for language, corpus in itertools.product(
                 ['english', 'german', 'swedish', 'latin'],
@@ -45,7 +51,9 @@ if __name__ == '__main__':
                 ):
             logging.info('Running {} {}'.format(language, corpus))
             with open('{}_{}.emb'.format(language, corpus), 'wt') as handle:
-                for chnk in chunk(get_ctxs(language, corpus, xlmr.task.dictionary.pad_index)):
+                for chnk in chunk(
+                        get_ctxs(language, corpus, xlmr.task.dictionary.pad_index), 
+                        chunksize = args.batch_size):
                     tokens, starts, stops, seqs = zip(*chnk)
                     seqs = torch.tensor(seqs)
                     embs = xlmr.extract_features(seqs)# [0][start:stop].mean(0).tolist()

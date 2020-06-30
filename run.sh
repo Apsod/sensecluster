@@ -1,2 +1,2 @@
-python embed.py
+python embed.py --cuda
 python cluster.py
