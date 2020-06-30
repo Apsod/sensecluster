@@ -22,7 +22,7 @@ def get_ctxs(lang, corpus, pad_token):
         stop = int(stop)
         ixs = [int(ix) for ix in ixs.split()]
 
-        free = len(ixs) - stop + start
+        free = 512 - stop + start
 
         w = free // 2
 
