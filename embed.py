@@ -7,27 +7,6 @@ import multiprocessing
 
 import torch
 import numpy
-
-def get_ctxs(lang, corpus, pad_token):
-    ret = []
-    for line in open('{}_{}.ctx'.format(lang, corpus), 'rt'):
-        token, start, stop, ixs = line.strip().split('\t')
-        start = int(start)
-        stop = int(stop)
-        ixs = [int(ix) for ix in ixs.split()]
-
-        free = len(ixs) - stop + start
-
-        lb = max(0, start - free // 2)
-        rb = min(512, stop + free // 2)
-
-        arr = numpy.full(512, pad_token)
-
-        arr[:(rb - ub)] = ixs[lb:rb]
-        
-
-        ret.append(token, start-lb, stop-lb, arr)
-
     
 def chunk(gen, chunksize=100):
     chnk = list(itertools.islice(gen, chunksize))
@@ -45,9 +24,10 @@ def get_ctxs(lang, corpus, pad_token):
 
         free = len(ixs) - stop + start
 
-        lb = max(0, start - free // 2)
-        rb = min(512, stop + free // 2)
-        ixs = ixs[lb:rb]
+        w = free // 2
+
+        lb = max(0, start - w)
+        ixs = ixs[lb:stop + w]
         arr = numpy.full(512, pad_token)
         arr[:len(ixs)] = ixs
         yield token, start-lb, stop-lb, arr

@@ -14,7 +14,7 @@ import tqdm
 
 
 LANGS = ['english', 'german', 'swedish', 'latin']
-Data = collections.namedtuple('Data', ['X', 'W', 'C'])
+Data = collections.namedtuple('Data', ['X', 'W', 'C', 'words'])
 
 def read_emb(language, corpus):
     words = []
@@ -35,12 +35,13 @@ def load(language):
     C = numpy.array([1 for _ in w1] + [2 for _ in w2])
     W = numpy.array(w1 + w2)
     X = numpy.array(e1 + e2)
+    unique = list(set((w1 + w2)))
 
     logging.info('C: {}, W: {}, X: {}'.format(C.shape, W.shape, X.shape))
 
     keep = ~numpy.isnan(X).any(1)
     logging.warning("dropping {} nan-embeddings".format(sum(~keep)))
-    return Data(X[keep], W[keep], C[keep])
+    return Data(X[keep], W[keep], C[keep], words=unique)
 
 def jsd(p, q):
     p = p / p.sum()
@@ -73,7 +74,7 @@ def cluster_all_targets(language, N=8):
     logging.info('clustering {}'.format(lang))
     data = load(language)
     results = []
-    for w in tqdm.tqdm(data.W):
+    for w in tqdm.tqdm(data.words):
         results.append((w, *cluster(data, w)))
     return results
 
