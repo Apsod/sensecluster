@@ -1,0 +1,13 @@
+# packages to install:
+docopt==0.6.2
+gensim==3.7.1
+
+numpy
+scikit-learn
+torch
+tqdm
+regex
+requests
+cython
+sentencepiece
+
