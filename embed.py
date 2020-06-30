@@ -38,6 +38,8 @@ if __name__ == '__main__':
     parser.add_argument('--cuda', action='store_true')
     parser.add_argument('--batch_size', type=int, default=100)
 
+    args = parser.parse_args()
+
     with torch.no_grad():
         logging.basicConfig(level=logging.DEBUG)
         logging.info('loading XLM-R')
